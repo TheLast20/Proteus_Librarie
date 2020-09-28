@@ -2,29 +2,18 @@ import Proteus as Pt
 import numpy as np
 import matplotlib.pyplot as plt
 
-Ts = 0.0001
-Tsimu = 3/60
 
-t = np.arange(0,Tsimu+Ts,Ts)
-t = t[:,np.newaxis]
-
-low_voltage = -4 #[V]
-high_voltage = 4 #[V]
-pulse_width = 70 #[%]
-frecuency = 60 #[Hz]
-#periodo = 1 #[s]
-sample_time = 0
-#
+system = Pt.Signal(10,0.0001)
+system.Add_PWM(low_voltage=0,high_voltage=5,pulse_width=50,period=2)
+system.Add_Sinusoidal(Amplitud=5,Frecuency=60,noise=0.05)
+system.Add_Sinusoidal(Amplitud=2,Frecuency=135,noise=0.15)
+system.Generate_File("signal1")
 
 
-signal = Pt.PWM(t,low_voltage,high_voltage,pulse_width,frecuency = 60,sample_time = 0.01,end_time=0.03)
+X = system.t
+Y = system.signal
 
-
-
-plt.plot(t,signal)
+plt.plot(X,Y)
+plt.grid()
 plt.show()
-
-
-
-
 
