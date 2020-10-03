@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Signal():
     def __init__(self,Tsim,Ts):
@@ -17,8 +18,6 @@ class Signal():
         #Create necessary operation
         self.comparation = lambda x, min, max: np.logical_and(x > min, x < max)
 
-
-
     def Add_PWM(self,low_voltage,high_voltage,pulse_width,period=0,frecuency=0,start_time=0,end_time=0):
 
         #Initial data
@@ -34,8 +33,6 @@ class Signal():
         self.auxiliar = np.zeros([self.t.shape[0], 1])
 
         num_period = round(end_time / period)
-
-
 
 
         for i in range(num_period):
@@ -62,7 +59,6 @@ class Signal():
 
         #Add a signal
         self.signal+= self.auxiliar
-
 
     def Add_Sinusoidal(self,Amplitud,Frecuency,DC_Gain=0,start_time=0,end_time=0,desfase=0,noise=0):
         if end_time == 0:
@@ -96,6 +92,37 @@ class Signal():
 
         self.signal+= self.sinusoidal
 
+    def Generate_AM_Signal(self,amplitud,frecuency1,frecuency2,modulation=1):
+        #Signal 1
+        self.sinusoidal1 = np.sin(2 * np.pi * frecuency1 * (self.t ))
+
+        #Signal 2
+        self.A = modulation*(amplitud/2)
+        self.time = self.t - ((amplitud*np.pi)/(4))*np.ones((self.t.shape[0],1))
+
+        self.sinusoidal2 = self.A*np.sin(2*np.pi*frecuency2*self.time) + amplitud/2
+
+        self.AM = self.sinusoidal1 * self.sinusoidal2
+
+        self.signal+=self.AM
+
+
+    def Generate_FM_Signal(self,amplitud,frecuency1,frecuency2,period,duty_cycle=50):
+        self.n_cycles = round(self.Tsim/period)+1
+        self.signal_aux = np.zeros((self.t.shape[0],1))
+        for i in range(self.n_cycles):
+            self.min = period * i
+            self.max = period * i + period * (duty_cycle / 100)
+            self.signal_aux = np.logical_or(self.signal_aux, self.comparation(self.t, self.min, self.max))
+
+        self.signal += 1 * self.signal_aux * np.sin(2 * np.pi * frecuency1 * self.t)
+
+        self.signal_aux = -1 * self.signal_aux
+        self.signal_aux[self.signal_aux == 0] = 1
+        self.signal_aux[self.signal_aux == -1] = 0
+        self.signal += 1 * self.signal_aux * np.sin(2 * np.pi * frecuency2 * self.t)
+
+
 
     def Generate_File(self,name):
         archivo = open(name+".txt", "w")
@@ -105,8 +132,26 @@ class Signal():
             archivo.write(text)
         archivo.close()
 
-    # def Generate_Graph(self,min_x = None, max_x = None, min_y = None, max_y = None):
-    #     if min_x == None:
-    #         print("Si")
-    #     else:
-    #         print("No")
+    def Generate_Graph(self,min_x = None, max_x = None, min_y = None, max_y = None):
+        plt.plot(self.t,self.signal)
+        if min_x != None and max_x != None:
+            plt.xlim(min_x,max_x)
+
+        elif min_x == None and max_x != None:
+            plt.xlim(0,max_x)
+
+        elif min_x != None and max_x == None:
+            plt.xlim(min_x, max(self.t))
+
+        if min_y != None and max_y != None:
+            plt.ylim(min_y, max_y)
+
+        elif min_y == None and max_y != None:
+            plt.ylim(None, max_y)
+
+        elif min_y != None and max_y == None:
+            plt.ylim(min_y, None)
+
+        plt.show()
+
+
