@@ -107,6 +107,9 @@ class Signal():
         self.signal+=self.AM
 
 
+    def Clear_Signal(self):
+        self.signal = np.zeros([self.t.shape[0],1])
+
     def Generate_FM_Signal(self,amplitud,frecuency1,frecuency2,period,duty_cycle=50):
         self.n_cycles = round(self.Tsim/period)+1
         self.signal_aux = np.zeros((self.t.shape[0],1))
@@ -134,6 +137,9 @@ class Signal():
 
     def Generate_Graph(self,min_x = None, max_x = None, min_y = None, max_y = None):
         plt.plot(self.t,self.signal)
+        plt.xlabel("tiempo")
+        plt.ylabel("V")
+        plt.grid()
         if min_x != None and max_x != None:
             plt.xlim(min_x,max_x)
 
