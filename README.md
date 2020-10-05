@@ -20,4 +20,4 @@ AM modulation: signal generated in Python / signal displayed on Proteus oscillos
 ![github-small](https://github.com/TheLast20/Proteus_Librarie/blob/master/capture/modulation_AM.png)
 
 FM modulation: signal generated in Python / signal displayed on Proteus oscilloscope
-https://github.com/TheLast20/Proteus_Librarie/blob/master/capture/modulation_FM.png
+![github-small](https://github.com/TheLast20/Proteus_Librarie/blob/master/capture/modulation_FM.png)
